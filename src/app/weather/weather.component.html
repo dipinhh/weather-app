@@ -9,8 +9,42 @@
             <input type="text" placeholder="Search City" [formControl]="cityName" class="form-control w-100">
         </div>
         <div class="col-md-3">
-            <button class="btn btn-primary" [disabled]="!cityName?.value" (click)="onSearchClick();">Search</button>
+            <button class="btn btn-primary" [disabled]="!cityName?.value" (click)="onSearchClick()">Search</button>
         </div>
+        <div class="col-md-6 search-btn">
+            <button class="btn btn-primary"  (click)="viewSearchHistory()">Search History</button>
+        </div>
+    </div>
+</div>
+<div class="row mt-4">
+    <div class="col-md-9">
+
+    </div>
+    <div class="col-md-3" *ngIf="searchStatus">
+        <div class="mt-2">
+            <h3>Search History</h3>
+        
+            <table class="table">
+                <thead class="thead-dark">
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Location</th>
+                    <th scope="col">Weather</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of searchHistory; let i = index;">
+                    <th scope="row">{{i+1}}</th>
+                    <td>{{item?.city?.name}}</td>
+                    <ng-container >
+                        <td>{{item?.list[0]?.weather[0]?.description}} </td>
+        
+                    </ng-container>
+                  </tr>
+                </tbody>
+              </table>
+        </div>
+        
     </div>
 </div>
 </div>
