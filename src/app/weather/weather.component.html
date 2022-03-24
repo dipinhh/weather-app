@@ -4,6 +4,7 @@
     <h3>Weather Forcast</h3>
 </nav>
 <div class="mt-2">
+    <form>
     <div class="row">
         <div class="col-md-3">
             <input type="text" placeholder="Search City" [formControl]="cityName" class="form-control w-100">
@@ -15,6 +16,7 @@
             <button class="btn btn-primary"  (click)="viewSearchHistory()">Search History</button>
         </div>
     </div>
+</form>
 </div>
 <div class="row mt-4">
     <div class="col-md-9">

@@ -67,7 +67,6 @@ export class WeatherComponent implements OnInit {
     this.searchStatus = false;
 this.getWeatherDetails();
 this.firestore.collection('searchData').valueChanges().subscribe(res => {
-  console.log(res, 'resres');
   this.searchHistory = res.filter((ele:any) => (ele?.city?.name).toLowerCase() === this.cityName.value.toLowerCase());
   this.getChart(this.searchHistory);
 });
@@ -76,7 +75,6 @@ this.firestore.collection('searchData').valueChanges().subscribe(res => {
   viewSearchHistory() {
     this.searchStatus = true;
    this.firestore.collection('searchData').valueChanges().subscribe(res => {
-    console.log(res, 'resres');
     this.searchHistory = res;  
    });
   }
