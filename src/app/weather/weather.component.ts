@@ -52,9 +52,7 @@ export class WeatherComponent implements OnInit {
     this.showChart = true;
 this.getWeatherDetails();
 this.firestore.collection('searchData').valueChanges().subscribe(res => {
-  this.searchHistory = res.filter((ele:any) => (ele?.city?.name).toLowerCase() === this.cityName.value.toLowerCase());
-  console.log(this.searchHistory[0]?.list[0]?.main?.temp_max, this.searchHistory[0]?.list[0]?.main?.temp_min, 'this.searchHistory');
-  
+  this.searchHistory = res.filter((ele:any) => (ele?.city?.name).toLowerCase() === this.cityName.value.toLowerCase());  
   this.temp = [[this.searchHistory[0]?.list[0]?.main?.temp_max, this.searchHistory[0]?.list[0]?.main?.temp_min]];
   this.hum = [[this.searchHistory[0]?.list[0]?.main?.humidity, this.searchHistory[0]?.list[0]?.main?.humidity]];
   this.mmhg = [[this.searchHistory[0]?.list[0]?.main?.pressure, this.searchHistory[0]?.list[0]?.main?.pressure]]

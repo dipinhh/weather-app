@@ -87,7 +87,7 @@
                     <th scope="row">{{i+1}}</th>
                     <td>{{item?.city?.name}}</td>
                     <ng-container >
-                        <td>{{item?.list[0]?.main?.temp}}Kelvin,  {{item?.list[0]?.weather[0]?.description}} </td>
+                        <td>{{item?.list[0]?.main?.temp}}&deg;C,  {{item?.list[0]?.weather[0]?.description}} </td>
                         <td>
                             {{item?.list[0]?.dt_txt | date: 'short'}} UTC
                         </td>
