@@ -2,114 +2,69 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { WeatherService } from './weather.service';
 import { AngularFirestore } from '@angular/fire/firestore';
-import * as am5 from "@amcharts/amcharts5";
-import * as am5map from "@amcharts/amcharts5/map";
-import am5geodata_worldLow from "@amcharts/amcharts5-geodata/worldLow";
+import { PlotBand } from '@progress/kendo-angular-charts';
 @Component({
   selector: 'app-weather',
   templateUrl: './weather.component.html',
   styleUrls: ['./weather.component.scss']
 })
 export class WeatherComponent implements OnInit {
-  
+  public hidden: any = { visible: false };
+  public tempPlotBands: PlotBand[] = [{
+      from: 30, to: 45, color: '#e62325', opacity: 1
+  }, {
+      from: 15, to: 30, color: '#ffc000', opacity: 1
+  }, {
+      from: 0, to: 15, color: '#37b400', opacity: 1
+  }, {
+      from: -10, to: 0, color: '#5392ff', opacity: 1
+  }];
+  public humPlotBands: PlotBand[] = [{
+      from: 0, to: 33, color: '#ccc', opacity: .6
+  }, {
+      from: 33, to: 66, color: '#ccc', opacity: .3
+  }];
+  public mmhgPlotBands: PlotBand[] = [{
+      from: 715, to: 752, color: '#ccc', opacity: .6
+  }, {
+      from: 752, to: 772, color: '#ccc', opacity: .3
+  }];
+  public temp: any[] = [[25, 22]];
+  public hum: any[] = [[45, 60]];
+  public mmhg: any[] = [[750, 762]];
+
   cityName = new FormControl();
   searchHistory: any[] = [];
   searchStatus: boolean = false;
-  lat: any;
-  lon: any;
-  chart: any;
-  pointSeries: any;
-  polygonSeries: any;
+  showChart: boolean = false;
   constructor(private weatherService: WeatherService, private firestore: AngularFirestore) { 
   }
   ngOnInit(): void {
-    let root = am5.Root.new("chartdiv");
-    this.chart = root.container.children.push(am5map.MapChart.new(root, {
-      panX: "translateX",
-      panY: "translateY",
-      projection: am5map.geoMercator(),
-      homeGeoPoint: { longitude: 10, latitude: 51 },
-      homeZoomLevel: 1
-    }));
-    this.polygonSeries = this.chart.series.push(am5map.MapPolygonSeries.new(root, {
-      geoJSON: am5geodata_worldLow,
-      exclude: ["AQ"]
-    }));
-    this.chart.set("zoomControl", am5map.ZoomControl.new(root, {}));
-    this.polygonSeries.events.on("datavalidated", () => {
-      this.chart.goHome();
-    })
-    this.pointSeries = this.chart.series.push(am5map.MapPointSeries.new(root, {}));
-  this.pointSeries.bullets.push(function() {
-  return am5.Bullet.new(root, {
-    sprite: am5.Picture.new(root, {
-      templateField: "pictureSettings"
-    })
-  })
-  })
-  
-  this.pointSeries.bullets.push(function() {
-  return am5.Bullet.new(root, {
-    sprite: am5.Label.new(root, {
-      templateField: "labelSettings",
-      centerX: am5.p50,
-      dy: 10
-    })
-  })
-  })
   }
   getWeatherDetails() {
     this.weatherService.getWeatherData(this.cityName.value).subscribe((res: any) => { 
       this.firestore.collection('searchData').add(res);
        });
   }
+
   onSearchClick() {
     this.searchStatus = false;
+    this.showChart = true;
 this.getWeatherDetails();
 this.firestore.collection('searchData').valueChanges().subscribe(res => {
   this.searchHistory = res.filter((ele:any) => (ele?.city?.name).toLowerCase() === this.cityName.value.toLowerCase());
-  this.getChart(this.searchHistory);
+  console.log(this.searchHistory[0]?.list[0]?.main?.temp_max, this.searchHistory[0]?.list[0]?.main?.temp_min, 'this.searchHistory');
+  
+  this.temp = [[this.searchHistory[0]?.list[0]?.main?.temp_max, this.searchHistory[0]?.list[0]?.main?.temp_min]];
+  this.hum = [[this.searchHistory[0]?.list[0]?.main?.humidity, this.searchHistory[0]?.list[0]?.main?.humidity]];
+  this.mmhg = [[this.searchHistory[0]?.list[0]?.main?.pressure, this.searchHistory[0]?.list[0]?.main?.pressure]]
 });
   }
-  
+
   viewSearchHistory() {
     this.searchStatus = true;
    this.firestore.collection('searchData').valueChanges().subscribe(res => {
     this.searchHistory = res;  
    });
   }
-getChart(searchData:any) {
-  searchData.forEach((element: any) => {
-    let src = 'https://www.amcharts.com/wp-content/uploads/assets/weather/animated/rainy-1.svg'
-    switch (element?.list[0]?.weather[0]?.main) {
-      case 'Clear':
-        src = 'https://www.amcharts.com/wp-content/uploads/assets/weather/animated/day.svg'
-        break;
-    
-        case 'Rain':
-          src = 'https://www.amcharts.com/wp-content/uploads/assets/weather/animated/rainy-1.svg'
-          break;
-              
-        case 'Clouds':
-          src = 'https://www.amcharts.com/wp-content/uploads/assets/weather/animated/cloudy-day-1.svg'
-          break;
-      }
-    this.pointSeries.data.setAll([{
-      geometry: { type: "Point", coordinates: [element?.city?.coord?.lon, element?.city?.coord?.lat] },
-      pictureSettings: {
-        src: src,
-        width: 50,
-        height: 50,
-        centerX: am5.p50,
-        centerY: am5.p50
-      },
-      labelSettings: {
-        text: `${element?.city?.name}, ${(element?.list[0]?.main?.temp).toFixed()}°C \n ${element?.list[0]?.weather[0]?.description}`
-      }
-      }
-      ]);
-    });
-    this.chart.appear(1000, 100);
-}
-
 }

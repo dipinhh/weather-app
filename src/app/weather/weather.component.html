@@ -19,8 +19,55 @@
 </form>
 </div>
 <div class="row mt-4">
-    <div class="col-md-9">
-        <div id="chartdiv" style="width: 100%; height: 500px"></div>
+    <div class="col-md-9" >
+      <div *ngIf="showChart">
+        <kendo-chart style="height: 120px;">
+          <kendo-chart-title text="Temperature [&deg;C]"></kendo-chart-title>
+          <kendo-chart-series>
+            <kendo-chart-series-item type="bullet" [data]="temp" color="#fff">
+            </kendo-chart-series-item>
+            <kendo-chart-category-axis>
+              <kendo-chart-category-axis-item [majorGridLines]="hidden" [minorGridLines]="hidden">
+              </kendo-chart-category-axis-item>
+            </kendo-chart-category-axis>
+            <kendo-chart-value-axis>
+              <kendo-chart-value-axis-item [majorGridLines]="hidden" [minorTicks]="hidden"
+                                           [min]="-10" [max]="45" [plotBands]="tempPlotBands">
+              </kendo-chart-value-axis-item>
+            </kendo-chart-value-axis>
+          </kendo-chart-series>
+          <kendo-chart-tooltip>
+            <ng-template kendoChartSeriesTooltipTemplate let-value="value">
+                Maximum: {{ value.target }} <br />
+                Average: {{ value.current }}
+            </ng-template>
+          </kendo-chart-tooltip>
+        </kendo-chart>
+  
+        <kendo-chart style="height: 120px;">
+          <kendo-chart-title text="Humidity [%]"></kendo-chart-title>
+          <kendo-chart-series>
+            <kendo-chart-series-item type="bullet" [data]="hum" color="#0058e9">
+            </kendo-chart-series-item>
+            <kendo-chart-category-axis>
+              <kendo-chart-category-axis-item [majorGridLines]="hidden" [minorGridLines]="hidden">
+              </kendo-chart-category-axis-item>
+            </kendo-chart-category-axis>
+            <kendo-chart-value-axis>
+              <kendo-chart-value-axis-item [majorGridLines]="hidden" [minorTicks]="hidden"
+                                           [min]="0" [max]="100" [plotBands]="humPlotBands">
+              </kendo-chart-value-axis-item>
+            </kendo-chart-value-axis>
+          </kendo-chart-series>
+          <kendo-chart-tooltip>
+            <ng-template kendoChartSeriesTooltipTemplate let-value="value">
+                Maximum: {{ value.target }} <br />
+                Average: {{ value.current }}
+            </ng-template>
+          </kendo-chart-tooltip>
+        </kendo-chart>
+
+      </div>
     </div>
     <div class="col-md-3" *ngIf="searchStatus">
         <div class="mt-2">
